@@ -664,7 +664,10 @@ if BranchLengthFile == 1;
     BranchLengthList=cell(1,numel(FullMg));
 end
 
-for i=1:numel(FullMg)
+% start timing this code fragment
+tic
+
+parfor i=1:numel(FullMg)
     try
         ex=zeros(s(1),s(2),zs); %Create blank image of correct size
         ex(FullMg{1,i})=1;%write in only one object at a time to image.
@@ -863,6 +866,9 @@ for i=1:numel(FullMg)
     
     disp(['cell ' num2str(i) ' of ' num2str(numel(FullMg))]);  %To see which cell we are currently prcoessing.
 end
+
+% print out time since 'tic' was seen
+toc
 
 %Save Branch Lengths File
 if BranchLengthFile == 1
