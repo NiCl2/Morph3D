@@ -22,36 +22,8 @@ function morph3D(in_file)
 
 addpath(genpath('Functions'));
 addpath('input');
-%
-% question = {'How would you like to run the script?','Interactive Mode is necessary to set your parameters. Use automatic if you already have a saved Parameters.mat file.'};
-% choiceMode = questdlg(question,'Mode Selection','Interactive Mode', 'Automatic Mode', 'Automatic Mode Without Images', 'Interactive Mode');
-%Response:
-% switch choiceMode
-%     case 'Interactive Mode'
-%         Interactive = 1;
-%         NoImages = 0;
-%         FileDataGUI;
-%         addpath(pathname);
-%         [~,file] = fileparts(file);
-%         % example: file = 'con1_CD68_2'; scale = 0.46125; %1 pixel = ___ um
-%         FileList = 1;
-%     case 'Automatic Mode'
-%         Interactive = 2;
-%         NoImages = 0;
-%         callgui = SelectFilesGUI;
-%         uiwait(callgui);
-%     case 'Automatic Mode Without Images'
-%         Interactive = 2;
-%         NoImages = 1;
-%         callgui = SelectFilesGUI;
-%         uiwait(callgui);
-% end
-
-% FileList = strcat('/scratch/c.c0808508/morph3D/input/', filename);
-% Parameters = '/scratch/c.c0808508/morph3D/paramaters.mat';
 
 FileList = in_file;
-% FileList = 'input/C1_OME_TIFF_Export_01_s1_ome_tiff_0_0_tif.tif';
 Parameters = 'parameters.mat';
 
 Interactive=2;
@@ -65,8 +37,7 @@ clearvars -except file ch ChannelOfInterest scale zscale Parameters FileList Pat
 
 if Interactive == 2
     load(Parameters);
-    %             addpath(PathList);
-    
+
     ShowImg = 1;
     ShowObjImg = 1;
     ShowCells = 1;
@@ -398,31 +369,6 @@ PercentMgVol = ((TotMgVol)/(CubeVol))*100;
 %cells.
 
 if Interactive == 1
-    %     Don't need this anymore bc I now generate the image inside the GUI
-    %     if ShowCells == 2
-    %         %do nothing, the figure is already made
-    %     else
-    %         num = 1:3:(3*numObjSep+1);
-    %         num(1,1) = zeros(1,1);
-    %             fullimg = ones(s(1),s(2));
-    %     progbar = waitbar(0,'Plotting...');
-    %         for i = 1:numObjSep
-    %             waitbar (i/numObjSep, progbar);
-    %             ex=zeros(s(1),s(2),zs);
-    %             j=udSepObjectList(i,2);
-    %             ex(Microglia{1,j})=1;%write in only one object to image. Cells are white on black background.
-    %             flatex = sum(ex,3);
-    %             OutlineImage = zeros(s(1),s(2));
-    %             OutlineImage(flatex(:,:)>1)=1;
-    %             se = strel('diamond',4);
-    %             Outline = imdilate(OutlineImage,se);
-    %             fullimg(Outline(:,:)==1)=1;
-    %             fullimg(flatex(:,:)>1)=num(1,i+1);
-    %         end
-    %             if isgraphics(progbar)
-    %             close(progbar);
-    %             end
-    %     end
     callgui2 = FullCellsGUI;
     waitfor(callgui2);
 end
@@ -672,7 +618,7 @@ parfor i=1:numel(FullMg)
         ex=zeros(s(1),s(2),zs); %Create blank image of correct size
         ex(FullMg{1,i})=1;%write in only one object at a time to image.
         ds = size(ex);
-        
+
         if OrigCellImg == 1
             title = [file,'_Cell',num2str(i)];
             figure('Name',title);
@@ -838,9 +784,7 @@ parfor i=1:numel(FullMg)
             filename = ([file '_Endpoints_cell' num2str(i)]);
             saveas(gcf, fullfile(fpath, filename), 'jpg');
         end
-        
-        disp(BranchImg);
-        
+
         if BranchImg == 1
             title = [file,'_Cell',num2str(i)];
             figure('Name',title); %Plot all branches with branchpoints
@@ -858,7 +802,7 @@ parfor i=1:numel(FullMg)
             filename = ([file '_Branchpoints_cell' num2str(i)]);
             saveas(gcf, fullfile(fpath, filename), 'jpg');
         end
-        
+
     catch
         %do nothing if an error is detected, just write in zeros and
         %continue to next loop iteration.
@@ -879,15 +823,13 @@ if BranchLengthFile == 1
         names(CellNum,1) = input;
     end
     BranchFilename = 'BranchLengths';
-%     xlswrite(fullfile(fpath, BranchFilename),names(:,:),1,'A1');
-    
+
     %Prime empty Branches array
     BranchLengths_out{numel(FullMg), 2} = [];
 
     %Add in data
     for CellNum = 1:numel(FullMg)
         if numel(BranchLengthList{1,CellNum})>0
-%             xlswrite(fullfile(fpath, BranchFilename),BranchLengthList{1,ColNum}',1,['B' num2str(ColNum)]);
                BranchLengths_out{CellNum, 1} = names(CellNum, 1);
                BranchLengths_out{CellNum, 2} = BranchLengthList{1,CellNum}';
         end
@@ -897,35 +839,6 @@ if BranchLengthFile == 1
     writetable(cell2table(BranchLengths_out), strcat(fullfile(fpath, BranchFilename), '.csv'), 'WriteVariableNames', false);
 
 end
-
-%% Output results
-%Creates new excel sheet with file name and saves to current folder.
-
-% xlswrite((strcat('Results',file)),{file},1,'B1');
-% xlswrite((strcat('Results',file)),{'Avg Centroid Distance um'},1,'A2');
-% xlswrite((strcat('Results',file)),AvgDist,1,'B2');
-% xlswrite((strcat('Results',file)),{'TotMgTerritoryVol um3'},1,'A3');
-% xlswrite((strcat('Results',file)),TotMgVol,1,'B3');
-% xlswrite((strcat('Results',file)),{'TotUnoccupiedVol um3'},1,'A4');
-% xlswrite((strcat('Results',file)),EmptyVol,1,'B4');
-% xlswrite((strcat('Results',file)),{'PercentOccupiedVol um3'},1,'A5');
-% xlswrite((strcat('Results',file)),PercentMgVol,1,'B5');
-% xlswrite((strcat('Results',file)),{'CellTerritoryVol um3'},1,'D1');
-% xlswrite((strcat('Results',file)),FullCellTerritoryVol(:,1),1,'E');
-% xlswrite((strcat('Results',file)),{'CellVolumes'},1,'F1');
-% xlswrite((strcat('Results',file)),CellVolume(:,1),1,'G');
-% xlswrite((strcat('Results',file)),{'RamificationIndex'},1,'H1');
-% xlswrite((strcat('Results',file)),FullCellComplexity(:,1),1,'I');
-% xlswrite((strcat('Results',file)),{'NumOfEndpoints'},1,'J1');
-% xlswrite((strcat('Results',file)),numendpts(:,1),1,'K');
-% xlswrite((strcat('Results',file)),{'NumOfBranchpoints'},1,'L1');
-% xlswrite((strcat('Results',file)),numbranchpts(:,1),1,'M');
-% xlswrite((strcat('Results',file)),{'AvgBranchLength'},1,'N1');
-% xlswrite((strcat('Results',file)),AvgBranchLength(:,1),1,'O');
-% xlswrite((strcat('Results',file)),{'MaxBranchLength'},1,'P1');
-% xlswrite((strcat('Results',file)),MaxBranchLength(:,1),1,'Q');
-% xlswrite((strcat('Results',file)),{'MinBranchLength'},1,'R1');
-% xlswrite((strcat('Results',file)),MinBranchLength(:,1),1,'S');
 
 %Make two results arrays...
 
@@ -943,11 +856,6 @@ for CellNum = 1:numel(FullMg)
 end
 writetable(cell2table(CellResults_out(2:end, :), 'VariableNames', CellResults_out(1, :)), strcat('CellResults_',file, '.csv'));
 
-
-% if Interactive == 2
-%     disp(['Finished file ' num2str(total) ' of ' num2str(numel(FileList))]);
-% end
-
 handles=findall(0,'type','figure');
 
 for fig = 1:numel(handles)
@@ -955,11 +863,6 @@ for fig = 1:numel(handles)
     saveas(handles(fig), fullfile(fpath, filename), 'jpg');
 end
 close all;
-
-%     catch
-%     end
-
-% end
 
 %% Parameters file
 %Save .mat parameters file for batch processing. Name is "Parameters_file
@@ -970,7 +873,5 @@ if Interactive == 1
     name = ['Parameters_',file,'_',num2str(time(1)),num2str(time(2)),num2str(time(3)),num2str(time(4))];
     save(name,'ch','ChannelOfInterest','scale','zscale','adjust','noise','s','ShowImg','ShowObjImg','ShowCells','ShowFullCells','CellSizeCutoff','SmCellCutoff','KeepAllCells','RemoveXY','ConvexCellsImage','SkelMethod','SkelImg','OrigCellImg','EndImg','BranchImg','BranchLengthFile');
 end
-
-% delete(gcp); %close parallel pool so error isn't generated when program is run again.
 
 end
