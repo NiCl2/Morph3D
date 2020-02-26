@@ -1,8 +1,9 @@
 #!/bin/bash
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=0-24:00
-#SBATCH --array=0
-#SBATCH --partition=c_compute_neuro1
+#SBATCH --cpus-per-task=4
+#SBATCH --array=0-7005
+#SBATCH --partition=c_compute_neuro1_long
 #SBATCH --job-name=Morph3D
 #SBATCH --account=scw1354
 #SBATCH --mail-type=END
