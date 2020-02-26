@@ -76,7 +76,7 @@ if Interactive == 2
     SkelImg = 1;
     EndImg = 1;
     BranchImg = 1;
-    
+
     if NoImages ==1
         ShowImg = 0; ShowObjImg = 0; ShowCells = 0; ShowFullCells = 0; ConvexCellsImage = 0; OrigCellImg = 0; SkelImg = 0; EndImg = 0; BranchImg = 0;
     end
@@ -92,11 +92,11 @@ if exist(strcat(file,'.lsm'),'file') == 2
     %the 1st row and column, which is a list of all channels. From these, we
     %want the _#_ channel (ChannelOfInterest).
     data = bfopen(strcat(file,'.lsm'));
-    
+
     s = size(data{1,1}{1,1}); % x and y size of the image
     l = length(data{1,1});
     zs = l(:,1)/ch; %Number of z planes
-    
+
     %To read only green data from a 3 channel z-stack, will write as slice 1
     %ch1, 2, 3, then slice 2 ch 1, 2, 3, etc. Need to extract every third image
     %to a new array. [] concatenates all of the retrieved data, but puts them
@@ -240,10 +240,10 @@ for i = 1:numObj %Evaluate all connected components in PixelIdxList.
         end
         [x,y,z]=ind2sub(size(ex),find(ex));%Find nonzero elements in ex (ie connected microglia cells) and return x y z locations.
         points = [x y z]; %concatenate to one array
-        
+
         GMModel = fitgmdist(points,nuc,'replicates',3); %Fit Gaussian mixture distribution to data
         idx = cluster(GMModel,points);
-        
+
         for j=1:nuc %Extract location of all pixels for each object.
             obj = (idx == j); % |1| for cluster 1 membership
             %             obj = find(clust==j);%return linear index of all values == nuc.
@@ -702,21 +702,21 @@ parfor i=1:numel(FullMg)
                 DownSampled = 0;
                 adjust_scale = scale;
             end
-            
+
             SmoothEx = imgaussfilt3(ex); %Smooth the cell so skeleton doesn't pick up many fine hairs
-            
+
             FastMarchSkel = skeleton(SmoothEx);%Find the skeleton! This uses msfm3d and rk4 files, which have been compiled and the .mexw64 versions included. If errors, re-run compilation of these files (in FastMarching_version3b folder), and add the folder and subfolders to path.
-            
+
             %Convert cell output of branches into one image for further processing.
             WholeSkel=zeros(size(ex));
             WholeList = round(vertcat(FastMarchSkel{:}));
             SkelIdx = sub2ind(size(ex),WholeList(:,1),WholeList(:,2),WholeList(:,3));
             WholeSkel(SkelIdx)=1;
         end
-        
+
         [BoundedSkel, right, left, top, bottom]  = BoundingBoxOfCell(WholeSkel); %Create a bounding box around the skeleton and only analyze this area to significantly increase processing speed.
         si = size(BoundedSkel);
-        
+
         % Find endpoints, and trace branches from endpoints to centroid
         i2 = floor(cent(i,:)); %From the calculated centroid, find the nearest positive pixel on the skeleton, so we know we're starting from a pixel with value 1.
         if DownSampled == 1
@@ -727,13 +727,13 @@ parfor i=1:numel(FullMg)
         i2 = closestPt; %Coordinates of centroid (endpoint of line).
         i2(:,1)=(i2(:,1))-left+1;
         i2(:,2) = (i2(:,2))-bottom+1;
-        
+
         endpts = (convn(BoundedSkel,kernel,'same')==1)& BoundedSkel; %convolution, overlaying the kernel cube to see the sum of connected pixels.
         EndptList = find(endpts==1);
         [r,c,p]=ind2sub(si,EndptList);%Output of ind2sub is row column plane
         EndptList = [r c p];
         numendpts(i,:) = length(EndptList);
-        
+
         masklist =zeros(si(1),si(2),si(3),length(EndptList));
         ArclenOfEachBranch = zeros(length(EndptList),1);
         for j=1:length(EndptList)%Loop through coordinates of endpoint.
@@ -750,26 +750,26 @@ parfor i=1:numel(FullMg)
             [arclen,seglen] = arclength(distpoint(:,1),distpoint(:,2),distpoint(:,3));%Use arc length function to calculate length of branch from coordinates
             ArclenOfEachBranch(j,1)=arclen; %Write the length in microns to a matrix where each row is the length of each branch, and each column is a different cell.
         end
-        
+
         %Find average min, max, and avg branch lengths
         MaxBranchLength(i,1) = max(ArclenOfEachBranch);
         MinBranchLength(i,1) = min(ArclenOfEachBranch);
         AvgBranchLength(i,1) = mean(ArclenOfEachBranch);
-        
+
         %Save branch lengths list
         if BranchLengthFile == 1
             BranchLengthList{1,i} = ArclenOfEachBranch;
         end
-        
+
         fullmask = sum(masklist,4);%Add all masks to eachother, so have one image of all branches.
         fullmask(fullmask(:,:,:)>3)=4;%So next for loop can work, replace all values higher than 3 with 4. Would need to change if want more than quaternary connectivity.
-        
+
         % Define branch level and display all on one colour-coded image.
         pri = (fullmask(:,:,:))==4;
         sec = (fullmask(:,:,:))==3;
         tert = (fullmask(:,:,:))==2;
         quat = (fullmask(:,:,:))==1;
-        
+
         if SkelImg == 1
             title = [file,'_Cell',num2str(i)];
             figure('Name',title); %Plot all branches as primary (red), secondary (yellow), tertiary (green), or quaternary (blue).
@@ -796,7 +796,7 @@ parfor i=1:numel(FullMg)
             filename = ([file '_Skeleton_cell' num2str(i)]);
             saveas(gcf, fullfile(fpath, filename), 'jpg');
         end
-        
+
         % Find branchpoints
         brpts =zeros(si(1),si(2),si(3),4);
         for kk=1:3 %For branchpoints not connected to end branches (ie. not distal branches). In fullmask, 1 is branch connected to end point, so anything greater than that is included.
@@ -804,7 +804,7 @@ parfor i=1:numel(FullMg)
             tempendpts = (convn(temp,kernel,'same')==1)& temp; %Get all of the 'distal' endpoints of kk level branches
             brpts(:,:,:,kk+1)=tempendpts;
         end
-        
+
         % Find any branchpoints of 1s onto 4s (ie. final branch coming off of main trunk).
         quatendpts = (convn(quat,kernel,'same')==1)& quat; %convolution, overlaying the kernel cube onto final branches only.
         quatbrpts = quatendpts - endpts; %Have points at both ends of final branches. Want to exclude any distal points (true endpoints)
@@ -814,13 +814,13 @@ parfor i=1:numel(FullMg)
         qbpts = fullrep+quatbrpts;%Add the two vectors, so should have 4s and 1s.
         qbpts1 = convn(qbpts,ones([3 3 3]),'same'); %convolve with cube of ones to get 'connectivity'. All 1s
         brpts(:,:,:,1) = (quatbrpts.*qbpts1)>= 5;
-        
+
         allbranch = sum(brpts,4); %combine all levels of branches
         BranchptList = find(allbranch==1);%Find how many pixels are 1s (branchpoints)
         [r,c,p]=ind2sub(si,BranchptList);%Output of ind2sub is row column plane
         BranchptList = [r c p];
         numbranchpts(i,:) = length(BranchptList);
-        
+
         if EndImg == 1
             title = [file,'_Cell',num2str(i)];
             figure('Name',title); %Plot all branches with endpoints
@@ -863,7 +863,7 @@ parfor i=1:numel(FullMg)
         %do nothing if an error is detected, just write in zeros and
         %continue to next loop iteration.
     end
-    
+
     disp(['cell ' num2str(i) ' of ' num2str(numel(FullMg))]);  %To see which cell we are currently prcoessing.
 end
 
@@ -892,10 +892,10 @@ if BranchLengthFile == 1
                BranchLengths_out{CellNum, 2} = BranchLengthList{1,CellNum}';
         end
     end
-    
+
     %Write to file
     writetable(cell2table(BranchLengths_out), strcat(fullfile(fpath, BranchFilename), '.csv'), 'WriteVariableNames', false);
-    
+
 end
 
 %% Output results
