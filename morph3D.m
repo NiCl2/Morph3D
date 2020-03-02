@@ -19,11 +19,14 @@ function morph3D(in_file, out_dir, tmp_dir_n)
 % create a local cluster object
 pc = parcluster('local');
 
-mkdir(strcat('tmp_', num2str(tmp_dir_n)))
+tmp_dir = strcat('tmp_', num2str(tmp_dir_n));
+
+mkdir(tmp_dir);
+% addpath(tmp_dir);
 
 % explicitly set the JobStorageLocation to the temp directory that
 % is unique to each cluster job (and is on local, fast scratch)
-pc.JobStorageLocation = getenv(strcat('tmp_', num2str(tmp_dir_n)));
+pc.JobStorageLocation = tmp_dir;
 
 pc.JobStorageLocation
 
