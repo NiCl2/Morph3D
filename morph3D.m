@@ -16,7 +16,7 @@
 
 function morph3D(in_file, out_dir, tmp_dir_n)
 
-create a local cluster object
+% create a local cluster object
 pc = parcluster('local');
 
 % explicitly set the JobStorageLocation to the temp directory that
