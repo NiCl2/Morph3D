@@ -649,7 +649,7 @@ end
 
 if SkelImg||EndImg||BranchImg||OrigCellImg||BranchLengthFile ==1
     folder = mkdir ([out_dir, '/', file, '_figures']);
-    fpath =([out_dir, file, '_figures']);
+    fpath =(strcat(out_dir, '/', file, '_figures'));
 end
 
 if BranchLengthFile == 1;
