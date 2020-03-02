@@ -14,7 +14,7 @@
 %(territorial volume / cell volume), number of endpoints, branch points,
 %and the minimum, maximum, and average branch length.
 
-function morph3D(in_file, tmp_dir_n)
+function morph3D(in_file, out_dir, tmp_dir_n)
 
 create a local cluster object
 pc = parcluster('local');
@@ -58,13 +58,7 @@ parpool('local',4,'AttachedFiles',{'Functions/arclength.m', ...
                                    'Functions/Skeleton/pk_follow_link.m'});
 
 addpath(genpath('Functions'));
-addpath('input1');
-addpath('input2');
-addpath('input3');
-addpath('input4');
-addpath('input5');
-addpath('input6');
-addpath('input7');
+addpath(genpath(out_dir));
 
 FileList = in_file;
 Parameters = 'parameters.mat';
@@ -650,8 +644,8 @@ if Interactive == 1
 end
 
 if SkelImg||EndImg||BranchImg||OrigCellImg||BranchLengthFile ==1
-    folder = mkdir ([file, '_figures']);
-    fpath =([file, '_figures']);
+    folder = mkdir ([out_dir, file, '_figures']);
+    fpath =([out_dir, file, '_figures']);
 end
 
 if BranchLengthFile == 1;
