@@ -14,15 +14,13 @@
 %(territorial volume / cell volume), number of endpoints, branch points,
 %and the minimum, maximum, and average branch length.
 
-function morph3D(in_file, out_dir, tmp_dir_n)
+function morph3D(in_file, out_dir, tmp_dir)
 
 % create a local cluster object
 pc = parcluster('local');
 
-tmp_dir = strcat('tmp_', num2str(tmp_dir_n));
-
-mkdir(tmp_dir);
-% addpath(tmp_dir);
+% specify location of temporary directory
+addpath(tmp_dir);
 
 % explicitly set the JobStorageLocation to the temp directory that
 % is unique to each cluster job (and is on local, fast scratch)
