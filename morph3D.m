@@ -21,7 +21,7 @@ pc = parcluster('local');
 
 % explicitly set the JobStorageLocation to the temp directory that
 % is unique to each cluster job (and is on local, fast scratch)
-pc.JobStorageLocation = getenv(strcat('tmp_', tmp_dir_n));
+pc.JobStorageLocation = getenv(strcat('tmp_', num2str(tmp_dir_n)));
 
 pc.JobStorageLocation
 
