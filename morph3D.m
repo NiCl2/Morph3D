@@ -75,7 +75,7 @@ NoImages=0;
 %     try
 %% Load file and saved values
 
-clearvars -except file ch ChannelOfInterest scale zscale Parameters FileList PathList Interactive NoImages total
+% clearvars -except file ch ChannelOfInterest scale zscale Parameters FileList PathList Interactive NoImages total
 
 if Interactive == 2
     load(Parameters);
