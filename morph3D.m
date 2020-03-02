@@ -648,8 +648,8 @@ if Interactive == 1
 end
 
 if SkelImg||EndImg||BranchImg||OrigCellImg||BranchLengthFile ==1
-    folder = mkdir ([out_dir, file, '_figures']);
-    fpath =([file, '_figures']);
+    folder = mkdir ([out_dir, '/', file, '_figures']);
+    fpath =([out_dir, "/", file, '_figures']);
 end
 
 if BranchLengthFile == 1;
