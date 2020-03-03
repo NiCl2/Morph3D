@@ -892,7 +892,7 @@ end
 ImageResults_out{5, 2} = [];
 ImageResults_out(1:5, 1) = {'Parameter', 'AvgCentroidDistance_um', 'TotMgTerritoryVol_um3', 'TotUnoccupiedVol_um3', 'PercentOccupiedVol_um3'};
 ImageResults_out(1:5, 2) = {'Value', AvgDist, TotMgVol, EmptyVol, PercentMgVol};
-writetable(cell2table(ImageResults_out(2:end, :), 'VariableNames', ImageResults_out(1, :)), strcat('ImageResults_',file, '.csv'));
+writetable(cell2table(ImageResults_out(2:end, :), 'VariableNames', ImageResults_out(1, :)), strcat(out_dir, '/ImageResults_', file, '.csv'));
 
 %Make results array for per-cell data
 CellResults_out{numel(FullMg)+1, 9}  = [];
@@ -900,7 +900,7 @@ CellResults_out(1, 1:9) = {'Cell', 'CellTerritoryVol_um3', 'CellVolumes', 'Ramif
 for CellNum = 1:numel(FullMg)
     CellResults_out(CellNum + 1, 1:9) = {names(CellNum, 1), FullCellTerritoryVol(CellNum,1), CellVolume(CellNum,1), FullCellComplexity(CellNum,1), numendpts(CellNum,1), numbranchpts(CellNum,1), AvgBranchLength(CellNum,1), MaxBranchLength(CellNum,1), MinBranchLength(CellNum,1)};
 end
-writetable(cell2table(CellResults_out(2:end, :), 'VariableNames', CellResults_out(1, :)), strcat('CellResults_',file, '.csv'));
+writetable(cell2table(CellResults_out(2:end, :), 'VariableNames', CellResults_out(1, :)), strcat(out_dir, '/CellResults_', file, '.csv'));
 
 handles=findall(0,'type','figure');
 
