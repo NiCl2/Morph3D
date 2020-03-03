@@ -62,7 +62,7 @@ parpool(pc, 4, 'AttachedFiles',{'Functions/arclength.m', ...
 
 addpath(genpath('Functions'));
 addpath(genpath(out_dir));
-addpath('input');
+addpath(genpath('C1q'));
 
 FileList = in_file;
 Parameters = 'parameters.mat';
