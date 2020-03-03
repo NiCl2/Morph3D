@@ -882,7 +882,7 @@ if BranchLengthFile == 1
     end
 
     %Write to file
-    writetable(cell2table(BranchLengths_out), strcat(fpath, BranchFilename, '.csv'), 'WriteVariableNames', false);
+    writetable(cell2table(BranchLengths_out), strcat(fullfile(fpath, BranchFilename), '.csv'), 'WriteVariableNames', false);
 
 end
 
