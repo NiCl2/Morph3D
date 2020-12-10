@@ -14,7 +14,7 @@
 %(territorial volume / cell volume), number of endpoints, branch points,
 %and the minimum, maximum, and average branch length.
 
-function morph3D(in_file, out_dir, tmp_dir)
+function morph3D(in_dir, in_file, params, out_dir, tmp_dir)
 
 % create a local cluster object
 pc = parcluster('local');
@@ -62,14 +62,10 @@ parpool(pc, 4, 'AttachedFiles',{'Functions/arclength.m', ...
 
 addpath(genpath('Functions'));
 addpath(genpath(out_dir));
-addpath(genpath('C1q'));
-addpath(genpath('LPS3and4chop_1'));
-addpath(genpath('LPS3and4chop_2'));
-addpath(genpath('LPS3and4chop_3'));
-addpath(genpath('LPS3and4chop_4'));
+addpath(genpath(in_dir));
 
 FileList = in_file;
-Parameters = 'parameters.mat';
+Parameters = params;
 
 Interactive=2;
 NoImages=0;
